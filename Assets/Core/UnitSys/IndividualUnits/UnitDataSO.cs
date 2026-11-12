@@ -17,4 +17,5 @@ public struct UnitComponent : ISelectable, IWithWorldPosition
     public Vector3 Target;
     public Vector3 WorldPosition { get; set; }
     public bool IsSelected { get; set; }
+    public bool IsInitialized { get; set; }
 }

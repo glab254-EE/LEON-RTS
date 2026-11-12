@@ -1,7 +1,6 @@
 using Leopotam.EcsProto;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Progress;
 
 public class SelectionSystem : IProtoInitSystem, IProtoDestroySystem
 {
@@ -62,13 +61,15 @@ public class SelectionSystem : IProtoInitSystem, IProtoDestroySystem
         {
             ref UnitComponent unit = ref aspect.Units.Get(item);
             unit.IsSelected = false;
+            if (!unit.IsInitialized)
+            {
+                unit.WorldPosition = unit.AttachedTransform.position - unit.OffsetPosition;
+                unit.Target = unit.WorldPosition;
+                unit.IsInitialized = true;
+            }
             if (bounds != null && IsUnitWithinCamera(unit, bounds.Value))
             {
                 unit.IsSelected = true;
-                if (unit.WorldPosition == default)
-                {
-                    unit.WorldPosition = unit.AttachedTransform.position - unit.OffsetPosition;
-                }
             }
         }
     }

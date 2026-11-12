@@ -1,5 +1,4 @@
 using Leopotam.EcsProto;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -59,6 +58,12 @@ public class UnitMovementSystem : IProtoInitSystem, IProtoRunSystem, IProtoDestr
         foreach (var item in iterator)
         {
             ref UnitComponent unit = ref aspect.Units.Get(item);
+            if (!unit.IsInitialized)
+            {
+                unit.WorldPosition = unit.AttachedTransform.position - unit.OffsetPosition;
+                unit.Target = unit.WorldPosition;
+                unit.IsInitialized = true;
+            }
             if (!IsUnitInDestination(unit))
             {
                 MoveUnitToDestination(ref unit);
@@ -94,10 +99,6 @@ public class UnitMovementSystem : IProtoInitSystem, IProtoRunSystem, IProtoDestr
     }
     private bool IsUnitInDestination(UnitComponent component)
     {
-        if (component.Target == null)
-        {
-            return true;
-        }
         if (Vector3.Distance(component.WorldPosition, component.Target) <= component.CurrentStoppingDistance)
         {
             return true;
